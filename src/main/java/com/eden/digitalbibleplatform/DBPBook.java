@@ -1,12 +1,10 @@
 package com.eden.digitalbibleplatform;
 
 import com.caseyjbrooks.eden.bible.Book;
+import com.caseyjbrooks.eden.defaults.DefaultBible;
 import com.google.gson.*;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DBPBook extends Book implements JsonDeserializer<DBPBook> {
 	public DBPBook() {
@@ -25,36 +23,32 @@ public class DBPBook extends Book implements JsonDeserializer<DBPBook> {
 
     @Override
     public DBPBook deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        this.id = json.getAsJsonObject().get("id").getAsString();
+        JsonObject bookJson = json.getAsJsonObject();
 
-        this.name = json.getAsJsonObject().get("name").getAsString();
-        this.abbreviation = json.getAsJsonObject().get("abbr").getAsString();
-        this.location = json.getAsJsonObject().get("ord").getAsInt();
+        this.id = bookJson.get("book_id").getAsString();
 
-        JsonArray chapters = json.getAsJsonObject().get("chapters").getAsJsonArray();
-        ArrayList<Integer> chapterVerseCounts = new ArrayList<>();
-        for(int j = 0; j < chapters.size(); j++) {
-            JsonObject chapterJSON = chapters.get(j).getAsJsonObject();
-            try {
-                String osis_end = chapterJSON.get("osis_end").getAsString();
-                Matcher m = Pattern.compile(".*\\.\\d+\\.(\\d+)").matcher(osis_end);
+        this.name = bookJson.get("book_name").getAsString();
+        this.abbreviation = bookJson.get("book_id").getAsString();
+        this.location = bookJson.get("book_order").getAsInt();
 
-                if(m.find()) {
-                    chapterVerseCounts.add(Integer.parseInt(m.group(1)));
-                }
-            }
-            catch(Exception e) {
-                e.printStackTrace();
+        // with Digitial Bible Platform, the number of verses in each chapter in each book is difficult to obtain, as
+        // that number is only provided by a separate call to each Chapter, so instead we can estimate the number of
+        // verses in each chapter in this book with the default numbers in the DefaultBible class, which is based on the
+        // counts in the English Standard Version. It only has knowledge of 66 books, but the Digital Bible Platform
+        // has 81, with Matthew starting at order 55, so we must try to account for New/Old testament differences and
+        // ignore apocryphal books for now when getting these numbers from the DefaultBible. If possible, implement your
+        // UI to asynchronously fetch the number of verses for each chapter when actually searching, and only rely on
+        // these numbers as a fallback, i.e. still trying to provide maximum functionality with no internet connection.
+        if(this.location >= 55) {
+            if((this.location - 16) < DefaultBible.defaultBookVerseCount.length) {
+                this.setChapters(DefaultBible.defaultBookVerseCount[(this.location - 16)]);
             }
         }
-
-        int[] chaptersArray = new int[chapterVerseCounts.size()];
-
-        for(int j = 0; j < chapterVerseCounts.size(); j++) {
-            chaptersArray[j] = chapterVerseCounts.get(j);
+        else if(this.location <= 39){
+            if((this.location - 1) < DefaultBible.defaultBookVerseCount.length) {
+                this.setChapters(DefaultBible.defaultBookVerseCount[(this.location - 1)]);
+            }
         }
-
-        this.setChapters(chaptersArray);
 
         return this;
     }

@@ -28,11 +28,11 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
     }
 
     public DBPPassage download() {
-        String APIKey = Eden.getInstance().getMetadata().getString("ABS_ApiKey", null);
+        String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
 
         if (TextUtils.isEmpty(APIKey)) {
             throw new IllegalStateException(
-                    "API key not set in ABT metadata. Please add 'ABS_ApiKey' key to metadata."
+                    "API key not set in Eden metadata. Please add 'DBT_ApiKey' key to metadata."
             );
         }
 
