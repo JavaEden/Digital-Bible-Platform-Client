@@ -42,7 +42,7 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
 
 //Downloadable Interface Implementation
 //--------------------------------------------------------------------------------------------------
-    public DBPBible download() {
+    public boolean get() {
         String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
 
         if (TextUtils.isEmpty(APIKey)) {
@@ -89,11 +89,12 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
 
             Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPBible.class, this).create();
             gson.fromJson(craftedJson, DBPBible.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
         }
-
-        return this;
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

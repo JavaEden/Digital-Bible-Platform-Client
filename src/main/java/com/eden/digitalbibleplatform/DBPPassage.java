@@ -3,8 +3,14 @@ package com.eden.digitalbibleplatform;
 import com.caseyjbrooks.eden.Eden;
 import com.caseyjbrooks.eden.bible.Passage;
 import com.caseyjbrooks.eden.bible.Reference;
+import com.caseyjbrooks.eden.bible.Verse;
 import com.caseyjbrooks.eden.utils.TextUtils;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -13,11 +19,11 @@ import java.lang.reflect.Type;
 import java.util.Base64;
 import java.util.HashMap;
 
-public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DBPPassage> {
+public class DBPPassage extends Passage implements JsonDeserializer<DBPPassage> {
 
     public DBPPassage(Reference reference) {
         super(reference);
-        this.formatter = new DBPFormatter();
+        this.verseFormatter = new DBPFormatter();
 
         if (reference.getBook() instanceof DBPBook) {
             DBPBook DBPBook = (DBPBook) reference.getBook();
@@ -27,7 +33,7 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
         }
     }
 
-    public DBPPassage download() {
+    public boolean get() {
         String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
 
         if (TextUtils.isEmpty(APIKey)) {
@@ -53,11 +59,12 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
 
             Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPPassage.class, this).create();
             gson.fromJson(body, DBPPassage.class);
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
         }
-
-        return this;
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
@@ -75,7 +82,7 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
                 .get("verses").getAsJsonArray();
 
         //add all verses to a map from which we can pick the individual verses we want
-        HashMap<Integer, DBPVerse> verseMap = new HashMap<>();
+        HashMap<Integer, Verse> verseMap = new HashMap<>();
         for(int i = 0; i < versesJSON.size(); i++) {
             Reference verseReference = new Reference.Builder()
                     .setBible(reference.getBible())
@@ -83,7 +90,7 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
                     .setChapter(reference.getChapter())
                     .setVerses(i)
                     .create();
-            DBPVerse verse = new DBPVerse(verseReference);
+            Verse verse = new Verse(verseReference);
 
             String text = versesJSON
                     .get(i).getAsJsonObject()
@@ -96,7 +103,7 @@ public class DBPPassage extends Passage<DBPVerse> implements JsonDeserializer<DB
 
         this.verses.clear();
         for(int i = 0; i < reference.getVerses().size(); i++) {
-            DBPVerse verseFromMap = verseMap.get(reference.getVerses().get(i));
+            Verse verseFromMap = verseMap.get(reference.getVerses().get(i));
             verses.add(verseFromMap);
         }
 
