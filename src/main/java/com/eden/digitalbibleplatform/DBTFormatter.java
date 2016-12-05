@@ -1,15 +1,15 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.bible.AbstractVerse;
-import com.caseyjbrooks.eden.interfaces.VerseFormatter;
+import com.eden.bible.AbstractVerse;
+import com.eden.interfaces.VerseFormatter;
 
-public class DBPFormatter implements VerseFormatter {
+public class DBTFormatter implements VerseFormatter {
     protected AbstractVerse verse;
 
     @Override
     public String onPreFormat(AbstractVerse verse) {
-        if(!(verse instanceof DBPPassage)) {
-            throw new IllegalArgumentException("DBPFormatter expects a verse of type DBPPassage");
+        if(!(verse instanceof DBTPassage)) {
+            throw new IllegalArgumentException("DBTFormatter expects a verse of type DBTPassage");
         }
 
         this.verse = verse;

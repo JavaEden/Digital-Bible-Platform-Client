@@ -1,13 +1,17 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.bible.Book;
-import com.caseyjbrooks.eden.defaults.DefaultBible;
-import com.google.gson.*;
+import com.eden.bible.Book;
+import com.eden.defaults.DefaultBible;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
 
 import java.lang.reflect.Type;
 
-public class DBPBook extends Book implements JsonDeserializer<DBPBook> {
-	public DBPBook() {
+public class DBTBook extends Book implements JsonDeserializer<DBTBook> {
+	public DBTBook() {
 		super();
 	}
 
@@ -22,7 +26,7 @@ public class DBPBook extends Book implements JsonDeserializer<DBPBook> {
 	}
 
     @Override
-    public DBPBook deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DBTBook deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject bookJson = json.getAsJsonObject();
 
         this.id = bookJson.get("book_id").getAsString();

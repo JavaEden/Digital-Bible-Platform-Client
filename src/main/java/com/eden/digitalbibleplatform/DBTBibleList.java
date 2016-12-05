@@ -1,9 +1,15 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.Eden;
-import com.caseyjbrooks.eden.bible.BibleList;
-import com.caseyjbrooks.eden.utils.TextUtils;
-import com.google.gson.*;
+import com.eden.Eden;
+import com.eden.bible.BibleList;
+import com.eden.utils.TextUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -12,12 +18,12 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
-public class DBPBibleList extends BibleList<DBPBible> implements JsonDeserializer<DBPBibleList> {
-    public DBPBibleList() {
+public class DBTBibleList extends BibleList<DBTBible> implements JsonDeserializer<DBTBibleList> {
+    public DBTBibleList() {
 
     }
 
-    public DBPBibleList download() {
+    public DBTBibleList download() {
         String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
 
         if (TextUtils.isEmpty(APIKey)) {
@@ -40,8 +46,8 @@ public class DBPBibleList extends BibleList<DBPBible> implements JsonDeserialize
             Response response = client.newCall(request).execute();
             String body = response.body().string();
 
-            Gson gson = new GsonBuilder().registerTypeAdapter(DBPBibleList.class, this).create();
-            gson.fromJson(body, DBPBibleList.class);
+            Gson gson = new GsonBuilder().registerTypeAdapter(DBTBibleList.class, this).create();
+            gson.fromJson(body, DBTBibleList.class);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,15 +57,15 @@ public class DBPBibleList extends BibleList<DBPBible> implements JsonDeserialize
     }
 
     @Override
-    public DBPBibleList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DBTBibleList deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonArray biblesJson = json.getAsJsonArray();
 
         this.bibles = new HashMap<>();
 
-        Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPBible.class, new DBPBible.ListJsonizer()).create();
+        Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBTBible.class, new DBTBible.ListJsonizer()).create();
 
         for (int i = 0; i < biblesJson.size(); i++) {
-            DBPBible bible = gson.fromJson(biblesJson.get(i), DBPBible.class);
+            DBTBible bible = gson.fromJson(biblesJson.get(i), DBTBible.class);
             bibles.put(bible.getId(), bible);
         }
 

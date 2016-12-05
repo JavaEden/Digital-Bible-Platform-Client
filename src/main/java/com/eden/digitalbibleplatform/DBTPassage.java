@@ -1,10 +1,10 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.Eden;
-import com.caseyjbrooks.eden.bible.Passage;
-import com.caseyjbrooks.eden.bible.Reference;
-import com.caseyjbrooks.eden.bible.Verse;
-import com.caseyjbrooks.eden.utils.TextUtils;
+import com.eden.Eden;
+import com.eden.bible.Passage;
+import com.eden.bible.Reference;
+import com.eden.bible.Verse;
+import com.eden.utils.TextUtils;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -19,15 +19,15 @@ import java.lang.reflect.Type;
 import java.util.Base64;
 import java.util.HashMap;
 
-public class DBPPassage extends Passage implements JsonDeserializer<DBPPassage> {
+public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> {
 
-    public DBPPassage(Reference reference) {
+    public DBTPassage(Reference reference) {
         super(reference);
-        this.verseFormatter = new DBPFormatter();
+        this.verseFormatter = new DBTFormatter();
 
-        if (reference.getBook() instanceof DBPBook) {
-            DBPBook DBPBook = (DBPBook) reference.getBook();
-            this.id = DBPBook.getId() + "." + reference.getChapter();
+        if (reference.getBook() instanceof DBTBook) {
+            DBTBook DBTBook = (DBTBook) reference.getBook();
+            this.id = DBTBook.getId() + "." + reference.getChapter();
         } else {
             this.id = "Matt.1";
         }
@@ -57,8 +57,8 @@ public class DBPPassage extends Passage implements JsonDeserializer<DBPPassage> 
             Response response = client.newCall(request).execute();
             String body = response.body().string();
 
-            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPPassage.class, this).create();
-            gson.fromJson(body, DBPPassage.class);
+            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBTPassage.class, this).create();
+            gson.fromJson(body, DBTPassage.class);
             return true;
         }
         catch (Exception e) {
@@ -69,14 +69,14 @@ public class DBPPassage extends Passage implements JsonDeserializer<DBPPassage> 
 
     @Override
     public String getText() {
-        if (reference.getBible() instanceof DBPBible)
-            return super.getText() + "<br/><i>" + ((DBPBible) reference.getBible()).getCopyright() + "</i>";
+        if (reference.getBible() instanceof DBTBible)
+            return super.getText() + "<br/><i>" + ((DBTBible) reference.getBible()).getCopyright() + "</i>";
         else
             return super.getText();
     }
 
     @Override
-    public DBPPassage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DBTPassage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonArray versesJSON = json.getAsJsonObject()
                 .get("response").getAsJsonObject()
                 .get("verses").getAsJsonArray();

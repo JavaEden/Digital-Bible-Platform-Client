@@ -1,15 +1,22 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.Eden;
-import com.caseyjbrooks.eden.bible.Bible;
-import com.caseyjbrooks.eden.utils.TextUtils;
-import com.google.gson.*;
+import com.eden.Eden;
+import com.eden.bible.Bible;
+import com.eden.utils.TextUtils;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 
 import java.lang.reflect.Type;
 
-public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBible> {
+public class DBTBible extends Bible<DBTBook> implements JsonDeserializer<DBTBible> {
 //Data Members
 //--------------------------------------------------------------------------------------------------
 
@@ -18,7 +25,7 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
 
 //Constructors
 //--------------------------------------------------------------------------------------------------
-    public DBPBible() {
+    public DBTBible() {
         super();
     }
 
@@ -87,8 +94,8 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
             craftedJson.add("bible", bibleJson);
             craftedJson.add("books", booksJson);
 
-            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPBible.class, this).create();
-            gson.fromJson(craftedJson, DBPBible.class);
+            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBTBible.class, this).create();
+            gson.fromJson(craftedJson, DBTBible.class);
             return true;
         }
         catch (Exception e) {
@@ -102,11 +109,11 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
         if (this == o) {
             return true;
         }
-        if (o == null || !(o instanceof DBPBible)) {
+        if (o == null || !(o instanceof DBTBible)) {
             return false;
         }
 
-        DBPBible bible = (DBPBible) o;
+        DBTBible bible = (DBTBible) o;
 
         if (getId().equalsIgnoreCase(bible.getId())) {
             return true;
@@ -121,7 +128,7 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
     }
 
     @Override
-    public DBPBible deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+    public DBTBible deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         final JsonObject bibleJson = json.getAsJsonObject();
 
         JsonObject bibleInfoJson = bibleJson.get("bible").getAsJsonObject();
@@ -140,9 +147,9 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
         for(int i = 0; i < booksJson.size(); i++) {
             JsonObject bookJson = booksJson.get(i).getAsJsonObject();
 
-            DBPBook book = new DBPBook();
-            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBPBook.class, book).create();
-            gson.fromJson(bookJson, DBPBook.class);
+            DBTBook book = new DBTBook();
+            Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBTBook.class, book).create();
+            gson.fromJson(bookJson, DBTBook.class);
 
             this.books.add(book);
         }
@@ -150,11 +157,11 @@ public class DBPBible extends Bible<DBPBook> implements JsonDeserializer<DBPBibl
         return this;
     }
 
-    public static class ListJsonizer implements JsonDeserializer<DBPBible> {
+    public static class ListJsonizer implements JsonDeserializer<DBTBible> {
         @Override
-        public DBPBible deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        public DBTBible deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
             JsonObject bibleJson = json.getAsJsonObject();
-            DBPBible bible = new DBPBible();
+            DBTBible bible = new DBTBible();
             if(bibleJson.has("dam_id"))           { bible.setId(              bibleJson.get("dam_id").getAsString().trim()); }
             if(bibleJson.has("version_name"))     { bible.setName(            bibleJson.get("version_name").getAsString().trim()); }
             if(bibleJson.has("version_code"))     { bible.setAbbreviation(    bibleJson.get("version_code").getAsString().trim()); }

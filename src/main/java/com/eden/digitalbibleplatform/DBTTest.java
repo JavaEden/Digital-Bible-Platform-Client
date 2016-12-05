@@ -1,21 +1,20 @@
 package com.eden.digitalbibleplatform;
 
-import com.caseyjbrooks.eden.Eden;
-import com.caseyjbrooks.eden.bible.Passage;
+import com.eden.Eden;
 
-public class DBPTest {
+public class DBTTest {
 
     public static void main(String[] args) {
         Eden eden = Eden.getInstance();
         eden.put("DBT_ApiKey", "82cb00ba8a8917d05e27c99facb8ff96");
         eden.put("com.eden.digitalbibleplatform.DBPRepository_selectedBibleId", "ENGESVN2DA");
-        eden.registerRepository(new DBPRepository());
+        eden.registerRepository(new DBTRepository());
 
         // Get our repository as an injected repository, and use it to query for our Bible
-        DBPRepository repo = (DBPRepository) eden.getRepository(DBPRepository.class);
+        DBTRepository repo = (DBTRepository) eden.getRepository(DBTRepository.class);
 //        Passage passage = repo.lookupVerse("Galatians 2:19-21");
 
-        DBPBible bible = repo.getSelectedBible();
+        DBTBible bible = repo.getSelectedBible();
 
         System.out.println(eden.getSerializer().create().toJson(bible));
 
