@@ -1,6 +1,9 @@
 package com.eden.digitalbibleplatform;
 
+import com.caseyjbrooks.clog.Clog;
 import com.eden.Eden;
+import com.eden.annotations.EdenBible;
+import com.eden.annotations.EdenBibleList;
 import com.eden.bible.Passage;
 
 public class DBTTest {
@@ -18,7 +21,26 @@ public class DBTTest {
 //        DBTBible bible = repo.getSelectedBible();
 
         System.out.println(passage.getReference().toString());
-        System.out.println(passage.getText());
         System.out.println(passage.getFormattedText());
+
+        DBTTest test = new DBTTest();
+        test.testInjector();
+    }
+
+    @EdenBible(repository = DBTRepository.class)
+    public DBTBible injectedBible;
+
+    @EdenBibleList(repository = DBTRepository.class)
+    public DBTBibleList injectedBibleList;
+
+    public void testInjector() {
+        Clog.i("\n\n");
+        Clog.i("Is injectedBible currently null?: #{$1}", (injectedBible == null));
+        Clog.i("Is injectedBibleList currently null?: #{$1}", (injectedBibleList == null));
+
+        Eden.getInstance().inject(this);
+
+        Clog.i("Is injectedBible currently null?: #{$1}", (injectedBible == null));
+        Clog.i("Is injectedBibleList currently null?: #{$1}", (injectedBibleList == null));
     }
 }
