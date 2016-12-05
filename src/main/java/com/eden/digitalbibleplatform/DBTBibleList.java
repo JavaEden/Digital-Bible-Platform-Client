@@ -23,7 +23,7 @@ public class DBTBibleList extends BibleList<DBTBible> implements JsonDeserialize
 
     }
 
-    public DBTBibleList download() {
+    public boolean get() {
         String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
 
         if (TextUtils.isEmpty(APIKey)) {
@@ -48,12 +48,12 @@ public class DBTBibleList extends BibleList<DBTBible> implements JsonDeserialize
 
             Gson gson = new GsonBuilder().registerTypeAdapter(DBTBibleList.class, this).create();
             gson.fromJson(body, DBTBibleList.class);
-
-        } catch (Exception e) {
-            e.printStackTrace();
+            return true;
         }
-
-        return this;
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

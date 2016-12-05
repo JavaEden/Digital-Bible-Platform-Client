@@ -13,10 +13,8 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 
 import java.lang.reflect.Type;
-import java.util.Base64;
 import java.util.HashMap;
 
 public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> {
@@ -34,7 +32,7 @@ public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> 
     }
 
     public boolean get() {
-        String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
+        String APIKey = Eden.getInstance().get("DBT_ApiKey");
 
         if (TextUtils.isEmpty(APIKey)) {
             throw new IllegalStateException(
@@ -42,23 +40,28 @@ public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> 
             );
         }
 
-        String url = "http://" + APIKey + ":x@bibles.org/v2/chapters/" + id + "/verses.js?include_marginalia=false";
+        String dam_id = this.getReference().getBible().getId();
+        String book_id = this.reference.getBook().getId();
+        int chapter_id = this.reference.getChapter();
+
+        String passageUrl = "http://dbt.io/text/verse?v=2&key=" + APIKey + "&dam_id=" + dam_id + "&book_id=" + book_id + "&chapter_id=" + chapter_id;
 
         try {
             OkHttpClient client = new OkHttpClient();
 
-            String encodedHeader = Base64.getEncoder().encodeToString((APIKey + ":x").getBytes("UTF-8"));
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .addHeader("Authorization", "Basic " + encodedHeader)
+            // get the main data about the Bible version
+            Request passageRequest = new Request.Builder()
+                    .url(passageUrl)
                     .build();
 
-            Response response = client.newCall(request).execute();
-            String body = response.body().string();
+            String bibleString = client
+                    .newCall(passageRequest)
+                    .execute()
+                    .body()
+                    .string();
 
             Gson gson = Eden.getInstance().getDeserializer().registerTypeAdapter(DBTPassage.class, this).create();
-            gson.fromJson(body, DBTPassage.class);
+            gson.fromJson(bibleString, DBTPassage.class);
             return true;
         }
         catch (Exception e) {
@@ -70,16 +73,14 @@ public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> 
     @Override
     public String getText() {
         if (reference.getBible() instanceof DBTBible)
-            return super.getText() + "<br/><i>" + ((DBTBible) reference.getBible()).getCopyright() + "</i>";
+            return super.getText();
         else
             return super.getText();
     }
 
     @Override
     public DBTPassage deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-        JsonArray versesJSON = json.getAsJsonObject()
-                .get("response").getAsJsonObject()
-                .get("verses").getAsJsonArray();
+        JsonArray versesJSON = json.getAsJsonArray();
 
         //add all verses to a map from which we can pick the individual verses we want
         HashMap<Integer, Verse> verseMap = new HashMap<>();
@@ -94,7 +95,8 @@ public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> 
 
             String text = versesJSON
                     .get(i).getAsJsonObject()
-                    .get("text").getAsString();
+                    .get("verse_text").getAsString()
+                    .trim();
 
             verse.setText(text);
 
