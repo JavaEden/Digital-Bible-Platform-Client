@@ -2,9 +2,9 @@ package com.eden.digitalbibleplatform;
 
 import com.caseyjbrooks.clog.Clog;
 import com.eden.Eden;
-import com.eden.annotations.EdenBible;
-import com.eden.annotations.EdenBibleList;
 import com.eden.bible.Passage;
+import com.eden.injection.annotations.EdenBible;
+import com.eden.injection.annotations.EdenBibleList;
 
 public class DBTTest {
 
