@@ -32,7 +32,7 @@ public class DBTBibleList extends BibleList<DBTBible> implements JsonDeserialize
             );
         }
 
-        String url = "http://dbt.io/library/volume?key=" + APIKey + "&v=2";
+        String url = "http://dbt.io/library/volume?key=" + APIKey + "&v=2&media=text";
 
         try {
             OkHttpClient client = new OkHttpClient.Builder()
