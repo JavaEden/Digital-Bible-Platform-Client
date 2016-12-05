@@ -15,7 +15,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
     compile 'com.squareup.okhttp3:okhttp:3.4.2'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile('com.github.JavaEden:Eden:b06683c6f4') {
+    compile('com.github.JavaEden:Eden:a5879212de') {
         transitive = true
     }
 }

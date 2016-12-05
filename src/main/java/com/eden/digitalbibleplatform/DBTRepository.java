@@ -2,7 +2,6 @@ package com.eden.digitalbibleplatform;
 
 import com.eden.EdenRepository;
 import com.eden.bible.Bible;
-import com.eden.bible.Book;
 
 public class DBTRepository extends EdenRepository {
     public DBTRepository() {
@@ -30,7 +29,7 @@ public class DBTRepository extends EdenRepository {
     }
 
     @Override
-    public void setSelectedBible(Bible<? extends Book> selectedBible) {
+    public void setSelectedBible(Bible selectedBible) {
         super.setSelectedBible(selectedBible);
     }
 
