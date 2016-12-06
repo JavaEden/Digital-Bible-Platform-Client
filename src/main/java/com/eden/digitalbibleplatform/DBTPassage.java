@@ -32,7 +32,7 @@ public class DBTPassage extends Passage implements JsonDeserializer<DBTPassage> 
     }
 
     public boolean get() {
-        String APIKey = Eden.getInstance().get("DBT_ApiKey");
+        String APIKey = Eden.getInstance().config().getString("DBT_ApiKey");
 
         if (TextUtils.isEmpty(APIKey)) {
             throw new IllegalStateException(

@@ -10,8 +10,8 @@ public class DBTTest {
 
     public static void main(String[] args) {
         Eden eden = Eden.getInstance();
-        eden.put("DBT_ApiKey", "82cb00ba8a8917d05e27c99facb8ff96");
-        eden.put("com.eden.digitalbibleplatform.DBTRepository_selectedBibleId", "ENGESVN2ET");
+        eden.config().putString("DBT_ApiKey", "82cb00ba8a8917d05e27c99facb8ff96");
+        eden.config().putString("com.eden.digitalbibleplatform.DBTRepository_selectedBibleId", "ENGESVN2ET");
         eden.registerRepository(new DBTRepository());
 
         // Get our repository as an injected repository, and use it to query for our Bible
@@ -20,6 +20,7 @@ public class DBTTest {
 
 //        DBTBible bible = repo.getSelectedBible();
 
+        System.out.println(eden.getSerializer().create().toJson(passage));
         System.out.println(passage.getReference().toString());
         System.out.println(passage.getFormattedText());
 

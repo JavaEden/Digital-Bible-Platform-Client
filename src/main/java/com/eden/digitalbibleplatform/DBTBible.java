@@ -50,7 +50,7 @@ public class DBTBible extends Bible<DBTBook> implements JsonDeserializer<DBTBibl
 //Downloadable Interface Implementation
 //--------------------------------------------------------------------------------------------------
     public boolean get() {
-        String APIKey = Eden.getInstance().getMetadata().getString("DBT_ApiKey", null);
+        String APIKey = Eden.getInstance().config().getString("DBT_ApiKey");
 
         if (TextUtils.isEmpty(APIKey)) {
             throw new IllegalStateException(
